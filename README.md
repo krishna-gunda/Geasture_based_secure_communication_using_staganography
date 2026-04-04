@@ -1,138 +1,67 @@
-# 🤝 Gesture Based Secure Communication using Steganography
-
-## Overview
-
-**Gesture Based Secure Communication using Steganography** is a security-focused application designed to transmit confidential information safely by combining **gesture recognition** and **steganography**. The system converts user gestures into secret messages and embeds those messages into digital media (such as images) so that the communication remains hidden and secure.
-
-This project demonstrates how human–computer interaction and information security techniques can be combined to protect sensitive data from unauthorized access.
-
----
-
-## Problem Statement
-
-Traditional communication channels expose sensitive data to risks such as interception, hacking, and data leakage. Even encrypted messages can raise suspicion. There is a need for a system that:
-
-* Hides the existence of communication itself
-* Provides an additional authentication layer
-* Ensures secure data transfer
-
----
-
-## Proposed Solution
-
-This project addresses the problem by:
-
-1. Capturing user gestures as input
-2. Converting gestures into encoded messages
-3. Embedding the encoded data into an image using **steganography**
-4. Transmitting the image securely
-5. Extracting and decoding the hidden message at the receiver side
-
-The hidden message remains invisible to attackers, ensuring confidentiality and integrity.
-
----
-
-## Key Features
-
-* ✋ Gesture-based message input
-* 🖼 Image steganography for data hiding
-* 🔐 Secure and covert communication
-* 🧠 Reduced risk of data interception
-* 🧩 Modular and scalable design
-* 🎓 Academic and research-oriented implementation
-
----
-
-## Technology Stack
-
-**Programming Language**
-
-* Python
-
-**Core Concepts**
-
-* Steganography (LSB-based technique)
-* Gesture Recognition
-* Image Processing
-* Secure Communication
-
-**Libraries / Tools**
-
-* OpenCV
-* NumPy
-* Python Imaging Library (PIL)
-
----
-
-## System Architecture
-
-1. Gesture Capture Module
-2. Gesture-to-Text Conversion
-3. Steganography Encoder
-4. Secure Image Transmission
-5. Steganography Decoder
-6. Message Reconstruction
-
----
+# SecureStego — Gesture-Based Secure Communication
 
 ## Project Structure
-project-folder/
+
+```
+your_project/
 │
-├── __pycache__/
-├── static/             
-├── templates/          
-├── app.py              
-├── requirements.txt    
-├── stego_utils.py      
+├── app.py                  ← Main Flask app (with auth + all routes)
+├── stego_utils.py          ← YOUR EXISTING FILE (keep as-is)
+├── requirements.txt        ← Python dependencies
+├── users.db                ← SQLite database (auto-created on first run)
+│
+├── templates/
+│   ├── login.html          ← Login page
+│   ├── register.html       ← Register page
+│   └── index.html          ← Main stego app (protected)
+│
+├── static/                 ← (optional) CSS/JS/image assets
+│
+└── logs/                   ← YOUR EXISTING log files
+    └── ...
+```
+
+## Setup Instructions
+
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Place your existing files
+Make sure `stego_utils.py` and your existing `Model.pkl`, `standar_scaler.pkl` are in the root project folder alongside `app.py`.
+
+### 3. Run the app
+```bash
+python app.py
+```
+
+Then open: **http://127.0.0.1:5000**
 
 ---
 
-## Use Cases
+## How Auth Works
 
-* Secure military or defense communication
-* Confidential corporate data transfer
-* Privacy-focused messaging systems
-* Academic research in cybersecurity
+- **Register** at `/register` → creates account in `users.db` (SQLite, passwords hashed with werkzeug)
+- **Login** at `/login` → sets a session cookie
+- **All `/app` and `/api/*` routes** are protected — redirect to login if not authenticated
+- **Logout** at `/logout` → clears session
 
----
+## Route Map
 
-## Advantages
+| Route          | Method     | Description                        |
+|----------------|------------|------------------------------------|
+| `/`            | GET        | Redirects to login or app          |
+| `/login`       | GET, POST  | Login page                         |
+| `/register`    | GET, POST  | Register page                      |
+| `/logout`      | GET        | Logs out user                      |
+| `/app`         | GET        | Main steganography app (protected) |
+| `/api/estimate`| POST       | Finger count from webcam snapshot  |
+| `/api/encrypt` | POST       | Embed message into image           |
+| `/api/decrypt` | POST       | Extract message from stego image   |
 
-* Communication remains hidden
-* Extra security through gestures
-* Hard to detect by attackers
-* Low computational cost
+## Security Notes
 
----
-
-## Limitations
-
-* Limited payload capacity in images
-* Sensitive to image compression
-* Gesture recognition accuracy depends on lighting and camera quality
-
----
-
-## Future Enhancements
-
-* Support for video steganography
-* Deep learning–based gesture recognition
-* Encryption + steganography combination
-* Mobile application implementation
-* Real-time secure communication
-
----
-
-## Academic Context
-
-This project was developed as an **academic mini/major project** to demonstrate practical applications of **cybersecurity, image processing, and human–computer interaction**.
-
----
-
-## License
-
-This project is intended for **educational and research purposes only**.
-
----
-
-⭐ *This project highlights strong fundamentals in cybersecurity, steganography, and secure system design—skills valued by recruiters in security and software roles.*
+- Passwords are hashed using `werkzeug.security.generate_password_hash` (PBKDF2)
+- Session secret key: change `stego-secret-2026-change-me` in `app.py` for production
+- Set `SECRET_KEY` as an environment variable in production
